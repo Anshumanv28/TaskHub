@@ -118,37 +118,37 @@ Hot restart completely restarts your app from scratch, which means all app state
 
 ### Splash Screen
 
-![Splash Screen](screenshots/splashScreen.png)
+<img src="screenshots/splashScreen.png" width="300" alt="Splash Screen">
 
 ### Authentication
 
 #### Sign Up Screen
 
-![Sign Up Screen](screenshots/singUpScreen.png)
+<img src="screenshots/singUpScreen.png" width="300" alt="Sign Up Screen">
 
 #### Sign In Screen
 
-![Sign In Screen](screenshots/signInScreen.png)
+<img src="screenshots/signInScreen.png" width="300" alt="Sign In Screen">
 
 ### Dashboard
 
 #### Dashboard Screen
 
-![Dashboard Screen](screenshots/DashboardScreen.png)
+<img src="screenshots/DashboardScreen.png" width="300" alt="Dashboard Screen">
 
 #### Task Creation Screen
 
-![Task Creation Screen](screenshots/taskCreationScreen.png)
+<img src="screenshots/taskCreationScreen.png" width="300" alt="Task Creation Screen">
 
 ### Theme Modes
 
 #### Home Screen (Dark Mode)
 
-![Home Screen Dark](screenshots/homeScreen_dark.png)
+<img src="screenshots/homeScreen_dark.png" width="300" alt="Home Screen Dark">
 
 #### Home Screen (Light Mode)
 
-![Home Screen Light](screenshots/homeScreen_white.png)
+<img src="screenshots/homeScreen_white.png" width="300" alt="Home Screen Light">
 
 ## ✨ Bonus Features
 
