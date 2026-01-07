@@ -6,6 +6,10 @@ TaskHub is a simple and clean task management app built with Flutter. It helps y
 
 You can download the release APK directly: [app-release.apk](app-release.apk)
 
+## 🎥 Demo Video
+
+Watch the app in action: [Demo Video](https://drive.google.com/file/d/1H57E-LLRomdOMfNu9gB4RmO0-HTdWKRe/view?usp=sharing)
+
 ## 🚀 Setup Instructions
 
 To get started with TaskHub, follow these steps:
