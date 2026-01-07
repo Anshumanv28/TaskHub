@@ -127,7 +127,7 @@ class AuthService extends ChangeNotifier {
       notifyListeners();
 
       final success = await _supabaseService.signInWithGoogle();
-      
+
       if (success) {
         // Wait a bit for the OAuth flow to complete
         // The auth state listener will update _currentUser
@@ -153,6 +153,9 @@ class AuthService extends ChangeNotifier {
       _isLoading = true;
       _error = null;
       notifyListeners();
+
+      // Unsubscribe from realtime updates before signing out
+      _supabaseService.unsubscribeFromTasks();
 
       await _supabaseService.signOut();
       _currentUser = null;

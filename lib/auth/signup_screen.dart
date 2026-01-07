@@ -69,7 +69,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // Show yellow confirmation message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(errorMessage),
+          content: Text(
+            errorMessage,
+            style: const TextStyle(color: AppTheme.textBlackColor),
+          ),
           backgroundColor: AppTheme.buttonBgColor, // Yellow
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 4),
@@ -91,6 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         SnackBar(
           content: Text(
             errorMessage.isNotEmpty ? errorMessage : 'Sign up failed',
+            style: const TextStyle(color: AppTheme.textWhiteColor),
           ),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
@@ -122,7 +126,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (!success && authService.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(authService.error!),
+            content: Text(
+              authService.error!,
+              style: const TextStyle(color: AppTheme.textWhiteColor),
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -133,7 +140,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to sign up with Google: ${e.toString()}'),
+            content: Text(
+              'Failed to sign up with Google: ${e.toString()}',
+              style: const TextStyle(color: AppTheme.textWhiteColor),
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),

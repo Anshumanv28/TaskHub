@@ -44,7 +44,10 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(taskProvider.error ?? 'Failed to create task'),
+          content: Text(
+            taskProvider.error ?? 'Failed to create task',
+            style: const TextStyle(color: AppTheme.textWhiteColor),
+          ),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );

@@ -79,6 +79,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 : isInvalidCredentials
                 ? 'User not registered. Sign up first.'
                 : errorMessage,
+            style: TextStyle(
+              color: isEmailNotConfirmed
+                  ? AppTheme
+                        .textBlackColor // Black for yellow background
+                  : AppTheme.textWhiteColor, // White for red background
+            ),
           ),
           backgroundColor: isEmailNotConfirmed
               ? AppTheme
@@ -104,7 +110,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!success && authService.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(authService.error!),
+            content: Text(
+              authService.error!,
+              style: const TextStyle(color: AppTheme.textWhiteColor),
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -115,7 +124,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to sign in with Google: ${e.toString()}'),
+            content: Text(
+              'Failed to sign in with Google: ${e.toString()}',
+              style: const TextStyle(color: AppTheme.textWhiteColor),
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
           ),

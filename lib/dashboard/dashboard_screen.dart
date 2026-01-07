@@ -5,6 +5,7 @@ import '../auth/auth_service.dart';
 import '../auth/login_screen.dart';
 import '../widgets/loading_indicator.dart';
 import '../app/theme.dart';
+import '../app/theme_provider.dart';
 import 'task_provider.dart';
 import 'task_tile.dart';
 import 'add_task_dialog.dart';
@@ -26,6 +27,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _handleLogout() async {
+    // Unsubscribe from realtime updates before logout
+    final taskProvider = Provider.of<TaskProvider>(context, listen: false);
+    taskProvider.unsubscribeFromRealtimeUpdates();
+
     final authService = Provider.of<AuthService>(context, listen: false);
     await authService.signOut();
 
@@ -37,15 +42,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  void _handleThemeToggle() {
+    Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+  }
+
   Future<void> _handleRefresh() async {
     await Provider.of<TaskProvider>(context, listen: false).loadTasks();
   }
 
   void _showAddTaskDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => const AddTaskDialog(),
-    );
+    showDialog(context: context, builder: (_) => const AddTaskDialog());
   }
 
   @override
@@ -54,6 +60,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         title: const Text('My Tasks'),
         actions: [
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return IconButton(
+                icon: Icon(
+                  themeProvider.themeMode == ThemeMode.dark
+                      ? Icons.light_mode
+                      : Icons.dark_mode,
+                ),
+                onPressed: _handleThemeToggle,
+                tooltip: themeProvider.themeMode == ThemeMode.dark
+                    ? 'Switch to light mode'
+                    : 'Switch to dark mode',
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: _handleLogout,
@@ -141,14 +162,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddTaskDialog,
-        child: const Icon(Icons.add),
-      )
-          .animate()
-          .scale(delay: 200.ms, duration: 400.ms)
-          .fadeIn(delay: 200.ms, duration: 400.ms),
+      floatingActionButton:
+          FloatingActionButton(
+                onPressed: _showAddTaskDialog,
+                child: const Icon(Icons.add),
+              )
+              .animate()
+              .scale(delay: 200.ms, duration: 400.ms)
+              .fadeIn(delay: 200.ms, duration: 400.ms),
     );
   }
 }
-

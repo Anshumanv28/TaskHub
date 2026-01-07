@@ -47,6 +47,9 @@ dependencies:
   # Google Fonts for Inter font
   google_fonts: ^6.2.1
 
+  # Shared preferences for theme persistence
+  shared_preferences: ^2.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

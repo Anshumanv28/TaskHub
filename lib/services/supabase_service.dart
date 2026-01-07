@@ -7,6 +7,7 @@ class SupabaseService {
   SupabaseService._internal();
 
   SupabaseClient get client => Supabase.instance.client;
+  RealtimeChannel? _tasksChannel;
 
   // Initialize Supabase
   static Future<void> initialize({
@@ -145,5 +146,65 @@ class SupabaseService {
     final task = tasks.firstWhere((t) => t.id == taskId);
     final newStatus = task.status == 'completed' ? 'pending' : 'completed';
     return await updateTask(taskId: taskId, status: newStatus);
+  }
+
+  // Realtime subscription methods
+  void subscribeToTasks({
+    required Function(PostgresChangePayload) onInsert,
+    required Function(PostgresChangePayload) onUpdate,
+    required Function(PostgresChangePayload) onDelete,
+  }) {
+    final userId = currentUserId;
+    if (userId == null) {
+      throw Exception('User not authenticated');
+    }
+
+    // Unsubscribe from existing channel if any
+    unsubscribeFromTasks();
+
+    // Create new channel for tasks
+    _tasksChannel = client
+        .channel('tasks_channel_$userId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'tasks',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: userId,
+          ),
+          callback: onInsert,
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'tasks',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: userId,
+          ),
+          callback: onUpdate,
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.delete,
+          schema: 'public',
+          table: 'tasks',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'user_id',
+            value: userId,
+          ),
+          callback: onDelete,
+        )
+        .subscribe();
+  }
+
+  void unsubscribeFromTasks() {
+    if (_tasksChannel != null) {
+      _tasksChannel!.unsubscribe();
+      _tasksChannel = null;
+    }
   }
 }

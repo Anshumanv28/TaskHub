@@ -8,6 +8,7 @@ class TaskProvider extends ChangeNotifier {
   List<Task> _tasks = [];
   bool _isLoading = false;
   String? _error;
+  bool _isSubscribed = false;
 
   List<Task> get tasks => _tasks;
   bool get isLoading => _isLoading;
@@ -28,11 +29,66 @@ class TaskProvider extends ChangeNotifier {
       _tasks = await _supabaseService.getTasks();
       _isLoading = false;
       notifyListeners();
+
+      // Subscribe to realtime updates if not already subscribed
+      if (!_isSubscribed) {
+        _subscribeToRealtimeUpdates();
+      }
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void _subscribeToRealtimeUpdates() {
+    try {
+      _supabaseService.subscribeToTasks(
+        onInsert: (payload) {
+          try {
+            final newTask = Task.fromJson(payload.newRecord);
+            // Check if task already exists (avoid duplicates)
+            if (!_tasks.any((task) => task.id == newTask.id)) {
+              _tasks.insert(0, newTask);
+              notifyListeners();
+            }
+          } catch (e) {
+            debugPrint('Error handling realtime insert: $e');
+          }
+        },
+        onUpdate: (payload) {
+          try {
+            final updatedTask = Task.fromJson(payload.newRecord);
+            final index = _tasks.indexWhere(
+              (task) => task.id == updatedTask.id,
+            );
+            if (index != -1) {
+              _tasks[index] = updatedTask;
+              notifyListeners();
+            }
+          } catch (e) {
+            debugPrint('Error handling realtime update: $e');
+          }
+        },
+        onDelete: (payload) {
+          try {
+            final deletedId = payload.oldRecord['id'] as String;
+            _tasks.removeWhere((task) => task.id == deletedId);
+            notifyListeners();
+          } catch (e) {
+            debugPrint('Error handling realtime delete: $e');
+          }
+        },
+      );
+      _isSubscribed = true;
+    } catch (e) {
+      debugPrint('Error subscribing to realtime updates: $e');
+    }
+  }
+
+  void unsubscribeFromRealtimeUpdates() {
+    _supabaseService.unsubscribeFromTasks();
+    _isSubscribed = false;
   }
 
   Future<bool> addTask({required String title, String? description}) async {
@@ -141,5 +197,11 @@ class TaskProvider extends ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    unsubscribeFromRealtimeUpdates();
+    super.dispose();
   }
 }
